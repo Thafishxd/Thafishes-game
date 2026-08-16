@@ -20,7 +20,7 @@ class Player:
         self.speed = speed
 
 def init():
-    global player, NPC
+    global NPC, player
     player = Player("Yoinky Yoinky", config.WIDTH//2, config.HEIGHT//2, 8, 32, (0, 120, 255))
     NPC = [
         Object("Sarah", 450, 150, 32, (255, 0, 0), [(10000, "Unluckily, It's still in progress"), (5000, "Stay tuned! ...")], 1),

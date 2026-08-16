@@ -2,86 +2,93 @@ import random
 import pygame
 import config
 import object
+from enum import Enum
+
+class Phase(Enum):
+    BAR = "bar"
+    COMPLETE = "complete"
+    SYNCED = "synced"
+    OUT_FLASH = "outflash"
+    DONE = "done"
 
 loading_start_time = 0
 complete_start_time = 0
 synced_start_time = None
 outflash_start_time = 0
-phase = "bar"  # "bar" -> "complete" -> "synced" -> "outflash" -> done
+phase = Phase.BAR
 current_tip = ""
 complete_text = ""
-
 
 def start_loading():
     global loading_start_time, phase
     loading_start_time = pygame.time.get_ticks()
-    phase = "bar"
+    phase = Phase.BAR
 
 
-def update_loading():
-    """Call every frame. Returns True once the whole sequence is done."""
+def load():
+    """Call once. Loop it with next"""
     global phase, complete_start_time, synced_start_time, outflash_start_time, current_tip, complete_text
 
-    now = pygame.time.get_ticks()
+    while True:
+        now = pygame.time.get_ticks()
+        
+        match phase:
+            case Phase.BAR:
+                elapsed = now - loading_start_time
+                if elapsed >= config.loading_duration:
+                    phase = Phase.COMPLETE
+                    complete_start_time = now
+                    synced_start_time = None
+                    current_tip = random.choice(config.TIPS)
+                    name = getattr(object.player, "name", "Player")
+                    complete_text = f"Loading Complete. Welcome, {name}"
 
-    if phase == "bar":
-        elapsed = now - loading_start_time
-        if elapsed >= config.loading_duration:
-            phase = "complete"
-            complete_start_time = now
-            synced_start_time = None
-            current_tip = random.choice(config.TIPS)
-            name = getattr(object.player, "name", "Player")
-            complete_text = f"Loading Complete. Welcome, {name}"
-        return False
+            case Phase.COMPLETE:
+                elapsed = now - complete_start_time
+                typed_chars = min(len(complete_text), elapsed // config.complete_char_delay)
+                typing_progress = (typed_chars / len(complete_text)) if complete_text else 1.0
 
-    if phase == "complete":
-        elapsed = now - complete_start_time
-        typed_chars = min(len(complete_text), elapsed // config.complete_char_delay)
-        typing_progress = (typed_chars / len(complete_text)) if complete_text else 1.0
+                # Kick off SYNCED once the typing is halfway through, so they run side by side
+                if synced_start_time is None and typing_progress >= config.overlap_start_progress:
+                    synced_start_time = now
 
-        # Kick off SYNCED once the typing is halfway through, so they run side by side
-        if synced_start_time is None and typing_progress >= config.overlap_start_progress:
-            synced_start_time = now
+                type_duration = len(complete_text) * config.complete_char_delay
+                total_complete_duration = type_duration + config.complete_hold_duration
+                if elapsed >= total_complete_duration:
+                    phase = Phase.SYNCED
+                    if synced_start_time is None:
+                        synced_start_time = now
 
-        type_duration = len(complete_text) * config.complete_char_delay
-        total_complete_duration = type_duration + config.complete_hold_duration
-        if elapsed >= total_complete_duration:
-            phase = "synced"
-            if synced_start_time is None:
-                synced_start_time = now
-        return False
+            case Phase.SYNCED:
+                elapsed = now - synced_start_time
+                total = config.focus_duration + config.synced_hold_duration
+                if elapsed >= total:
+                    phase = Phase.OUT_FLASH
+                    outflash_start_time = now
 
-    if phase == "synced":
-        elapsed = now - synced_start_time
-        total = config.focus_duration + config.synced_hold_duration
-        if elapsed >= total:
-            phase = "outflash"
-            outflash_start_time = now
-        return False
+            case Phase.OUT_FLASH:
+                elapsed = now - outflash_start_time
+                if elapsed >= config.outflash_duration: return
 
-    if phase == "outflash":
-        elapsed = now - outflash_start_time
-        if elapsed >= config.outflash_duration:
-            return True
-        return False
-
-    return False
+        yield
 
 
 def draw_loading(WIDTH, HEIGHT):
-    if phase == "bar":
-        _draw_bar(WIDTH, HEIGHT)
-    elif phase == "complete":
-        _draw_complete_bg(WIDTH, HEIGHT)
-        _draw_welcome_text(WIDTH, HEIGHT)
-        if synced_start_time is not None:
-            _draw_synced_overlay(WIDTH, HEIGHT, background=False)
-    elif phase == "synced":
-        _draw_synced_overlay(WIDTH, HEIGHT, background=True)
-        _draw_welcome_text(WIDTH, HEIGHT)
-    elif phase == "outflash":
-        _draw_outflash_stage(WIDTH, HEIGHT)
+    global phase
+
+    match phase:
+        case Phase.BAR:
+            _draw_bar(WIDTH, HEIGHT)
+        case Phase.COMPLETE:
+            _draw_complete_bg(WIDTH, HEIGHT)
+            _draw_welcome_text(WIDTH, HEIGHT)
+            if synced_start_time is not None:
+                _draw_synced_overlay(WIDTH, HEIGHT, background=False)
+        case Phase.SYNCED:
+            _draw_synced_overlay(WIDTH, HEIGHT, background=True)
+            _draw_welcome_text(WIDTH, HEIGHT)
+        case Phase.DONE:
+            _draw_outflash_stage(WIDTH, HEIGHT)
 
 
 def _draw_bar(WIDTH, HEIGHT):
@@ -162,13 +169,15 @@ def _draw_corner_brackets(surf, rect, size, thickness, color, side_slide=0):
     """Draws the four corner marks. Left corners get pulled further left by side_slide,
     right corners get pushed further right — so at side_slide > 0 the two halves are
     apart, converging to the normal frame as side_slide eases to 0."""
+
     x, y, w, h = rect
     pts = [
-        (x - side_slide, y, 1, 1),                  # top-left
+        (x - side_slide, y, 1, 1),                   # top-left
         (x + w + side_slide, y, -1, 1),              # top-right
         (x - side_slide, y + h, 1, -1),              # bottom-left
         (x + w + side_slide, y + h, -1, -1),         # bottom-right
     ]
+    
     for cx, cy, dx, dy in pts:
         pygame.draw.line(surf, color, (cx, cy), (cx + size * dx, cy), thickness)
         pygame.draw.line(surf, color, (cx, cy), (cx, cy + size * dy), thickness)
@@ -178,6 +187,7 @@ def _synced_ease():
     """Shared ease-out progress (0 to 1) for the whole SYNCED entrance animation —
     used by the zoom, the corner-pair slide, and the growing underline so they all
     finish in sync."""
+
     elapsed = pygame.time.get_ticks() - synced_start_time
     t = min(elapsed / config.focus_duration, 1.0)
     return 1 - (1 - t) ** 3  # ease-out: fast at first, decelerating into place
@@ -201,6 +211,7 @@ def _synced_zoom_rect(WIDTH, HEIGHT):
 def _synced_side_slide(WIDTH):
     """How far apart the left/right corner pairs still are. Starts fully off-screen
     on each side, decelerating (ease-out) to 0 — i.e. the two halves meeting in the middle."""
+
     ease = _synced_ease()
     max_slide = WIDTH * 0.75
     return max_slide * (1 - ease)
@@ -208,6 +219,7 @@ def _synced_side_slide(WIDTH):
 
 def _render_tracked_text(font, text, color, spacing=0):
     """Renders text with extra letter-spacing (tracking) for a cleaner, more modern look."""
+
     letter_surfs = [font.render(ch, True, color) for ch in text]
     total_w = sum(s.get_width() for s in letter_surfs) + spacing * (len(text) - 1)
     height = max(s.get_height() for s in letter_surfs)
@@ -223,6 +235,7 @@ def _bracket_shape_surface(height, cap, thickness, kind):
     """Draws a single [ or ] shape onto its own small transparent surface, so it can
     be alpha-faded and blitted independently (used for both the main brackets and
     the fading ghost copies)."""
+
     w = cap + thickness
     surf = pygame.Surface((w, height), pygame.SRCALPHA)
     color = (255, 255, 255)
@@ -243,6 +256,7 @@ def _draw_side_brackets(target, WIDTH, HEIGHT):
     Both the height AND the cap length scale together on entrance — a uniform,
     subtle zoom rather than just growing taller — using the same timing/ease as
     the corner-bracket zoom so everything settles together."""
+
     now = pygame.time.get_ticks()
     blink_on = (now // config.side_bracket_blink_interval) % 2 == 0
 
@@ -300,6 +314,7 @@ def _draw_side_brackets(target, WIDTH, HEIGHT):
 
 def _render_synced_content(target, WIDTH, HEIGHT):
     """Draws the SYNCED title, timer, and zooming brackets onto the given surface."""
+
     elapsed = pygame.time.get_ticks() - synced_start_time
     rect = _synced_zoom_rect(WIDTH, HEIGHT)
 
@@ -342,6 +357,7 @@ def _draw_synced_overlay(WIDTH, HEIGHT, background):
     If background=True, fills an opaque backdrop first (the pure SYNCED screen).
     If background=False, draws on a transparent layer that fades in on top of
     whatever's already on screen (used during the overlap with the typing screen)."""
+
     elapsed = pygame.time.get_ticks() - synced_start_time
 
     if background:

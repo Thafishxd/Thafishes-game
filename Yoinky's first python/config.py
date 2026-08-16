@@ -12,7 +12,6 @@ sub_font = pygame.font.SysFont("Courier New", 14)
 item_font = pygame.font.SysFont("Courier New", 18)
 
 class GameState(Enum):
-    LOADING = "loading"
     MENU = "menu"
     SETTING = "setting"
     PAUSE = "pause"
@@ -28,7 +27,7 @@ def init():
     current_dialogue = 0
     dialogue_timer = 0
 init()
-game_state = GameState.LOADING
+game_state = [GameState.MENU]
 
 # --- LOADING STATE ---
 loading_start_time = 0
