@@ -25,7 +25,7 @@ def load_game():
             npc_data = data["npc"]
             object.NPC = []
             for k, v in npc_data.items():
-                object.NPC.append(object.Object(k, v["x"], v["y"], v["size"], v["color"], v["dialogue"], v["map"]))
+                object.NPC.append(object.Object(k, v["x"], v["y"], v["size"], tuple(v["color"]), v["dialogue"], v["map"]))
 
             config.current_map = data["current-map"]
         except KeyError: pass
