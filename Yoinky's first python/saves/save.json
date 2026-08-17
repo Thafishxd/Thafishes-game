@@ -1,1 +1,1 @@
-{"player": {"name": "Yoinky Yoinky", "x": 252, "y": 224, "size": 32, "color": [0, 120, 255], "speed": 8}}
+{"player": {"name": "Yoinky Yoinky", "x": 600, "y": 300, "size": 32, "color": [0, 120, 255], "speed": 8}, "npc": {"Sarah": {"x": 450, "y": 150, "size": 32, "color": [255, 0, 0], "dialogue": [[10000, "Yo It's still in progress"], [5000, "Stay tuned! ..."]], "map": 1}, "Stupid": {"x": 100, "y": 150, "size": 32, "color": [0, 60, 60], "dialogue": [[5000, "I'm stupid"], [5000, "..."]], "map": 2}}, "current-map": 0}

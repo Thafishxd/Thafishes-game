@@ -25,6 +25,5 @@ def draw_hint(text):
     config.screen.blit(hint, (config.WIDTH//2 - hint.get_width()//2, config.HEIGHT - 25))
 
 def to_screen(x, y, cam_x, cam_y, scale):
-    if config.debug_mode:
-        return x * scale, y * scale
+    if config.debug_mode: return x * scale, y * scale
     return x - cam_x, y - cam_y

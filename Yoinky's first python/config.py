@@ -2,9 +2,11 @@ import pygame
 from enum import Enum
 
 pygame.init()
+pygame.mixer.init()
+
 WIDTH, HEIGHT = 1200, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Indie testing - In Demo")
+pygame.display.set_caption("Indie testing - Indev")
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Courier New", 16)
 big_font = pygame.font.SysFont("Courier New", 38, bold=True)
@@ -19,6 +21,8 @@ class GameState(Enum):
     GAME = "game"
 
 # --- GAME STATE ---
+game_state = [GameState.MENU]
+
 def init():
     global current_map, debug_mode, show_dialogue, current_dialogue, dialogue_timer
     current_map = 0
@@ -26,8 +30,8 @@ def init():
     show_dialogue = None
     current_dialogue = 0
     dialogue_timer = 0
+    
 init()
-game_state = [GameState.MENU]
 
 # --- LOADING STATE ---
 loading_start_time = 0
@@ -38,10 +42,10 @@ overlap_fade_duration = 650    # How long SYNCED takes to fade in over the typin
 complete_hold_duration = 300   # Extra hold after typing finishes, before phase fully switches
 flash_duration = 500           # White flash bridging into the SYNCED screen
 focus_duration = 1800          # How long the corner brackets take to zoom in
-synced_hold_duration = 1900    # How long SYNCED sits still after brackets settle
+syncing_hold_duration = 1900    # How long SYNCED sits still after brackets settle
 
 # --- Big side brackets ("[" and "]") that blink on the screen edges ---
-side_bracket_height = 580     # How tall each bracket is
+side_bracket_height = 580      # How tall each bracket is
 side_bracket_margin = 14       # Distance from the screen edge (small gap — "hugging", not touching)
 side_bracket_cap = 28          # Length of the top/bottom end ticks
 side_bracket_thickness = 7     # Line thickness of the main brackets
@@ -85,13 +89,12 @@ OUTFLASH_FLICKER_SCHEDULE = [
     (690, 750),
 ]
 STATUS_MESSAGES = [
-    "Reading 'main.py'...",
-    "Reading 'loading_screen.py'...",
-    "Loading assets...",
-    "Building world data...",
-    "Spawning NPCs...",
-    "Almost there...",
-    ";) *winky face*"
+    "Reading 'main.py'",
+    "Reading 'loading_screen.py'",
+    "Loading assets",
+    "Building world data",
+    "Spawning NPCs",
+    "Almost there"
 ]
 TIPS = [
 #    "Using the Settings, you can tweak various options to make your experience better.",
@@ -115,3 +118,13 @@ SAVE_ITEMS = ["YES", "NO", "CANCEL"]
 # --- SETTINGS STATE ---
 settings_selected = 0
 SETTINGS_ITEMS = ["DEBUG MODE: OFF", "BLINK SPEED: 700", "GHOST TRAVEL: 30", "BACK"]
+
+TPS = 60
+
+# --- SOUND EFFECT ---
+SELECT_EFFECT = "assets/sound/menu-selection.wav"
+EDIT_EFFECT = "assets/sound/ui-radio-select.wav"
+BACK_EFFECT = "assets/sound/ui-back-sound.wav"
+ENTER_EFFECT = "assets/sound/interface.wav"
+
+INTRO_EFFECT = "assets/sound/intro-bass.wav"

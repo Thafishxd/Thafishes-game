@@ -22,17 +22,19 @@ def draw_game_world():
     if config.debug_mode or config.current_map in [4, 5]:
         grid_col = (70, 70, 70) if config.current_map != 0 else (120, 120, 120)
         for x in range(0, mw + 1, 100):
-            sx, _ = core.to_screen(x, 0, cam_x, cam_y, scale)
+            sx = core.to_screen(x, 0, cam_x, cam_y, scale)[0]
             pygame.draw.line(config.screen, grid_col, (sx, 0), (sx, int(mh*scale) if config.debug_mode else config.HEIGHT))
+
         for y in range(0, mh + 1, 100):
-            _, sy = core.to_screen(0, y, cam_x, cam_y, scale)
+            sy = core.to_screen(0, y, cam_x, cam_y, scale)[1]
             pygame.draw.line(config.screen, grid_col, (0, sy), (int(mw*scale) if config.debug_mode else config.WIDTH, sy))
 
     # NPC
     for i in range(len(object.NPC)):
-        if config.current_map == object.NPC[i].map:
-            nx, ny = core.to_screen(object.NPC[i].x, object.NPC[i].y, cam_x, cam_y, scale)
-            pygame.draw.rect(config.screen, object.NPC[i].color, (int(nx), int(ny), int(object.NPC[i].size*scale), int(object.NPC[i].size*scale)))
+        if config.current_map != object.NPC[i].map: continue
+
+        nx, ny = core.to_screen(object.NPC[i].x, object.NPC[i].y, cam_x, cam_y, scale)
+        pygame.draw.rect(config.screen, object.NPC[i].color, (int(nx), int(ny), int(object.NPC[i].size*scale), int(object.NPC[i].size*scale)))
 
     # PLAYER
     px, py = core.to_screen(object.player.x, object.player.y, cam_x, cam_y, scale)
