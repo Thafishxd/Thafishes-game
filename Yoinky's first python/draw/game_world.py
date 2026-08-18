@@ -57,6 +57,9 @@ def draw_game_world():
     # DIALOGUE
     if dialogue.show_dialogue != None:
         if not dialogue.draw_dialogue():
+            dialogue.communicate_done = None
+            dialogue.last_chars = 0
+            
             dialogue.dialogue_timer = pygame.time.get_ticks()
             dialogue.current_dialogue += 1
             if not dialogue.current_dialogue < len(object.NPC[dialogue.show_dialogue].dialogue):

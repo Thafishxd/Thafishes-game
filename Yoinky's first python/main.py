@@ -213,9 +213,10 @@ def in_game():
                     dist = ((object.player.x - object.NPC[i].x)**2 + (object.player.y - object.NPC[i].y)**2)**0.5
                     if dist >= 80: continue
 
-                    dialogue.dialogue_timer = pygame.time.get_ticks()
+                    # Reset the dialogue, if has
                     dialogue.communicate_done = None
                     dialogue.last_chars = 0
+                    dialogue.dialogue_timer = pygame.time.get_ticks()
                     if dialogue.show_dialogue == i:
                         dialogue.current_dialogue += 1
                         if dialogue.current_dialogue >= len(object.NPC[dialogue.show_dialogue].dialogue):
