@@ -10,6 +10,7 @@ from draw import setting_screen
 from draw import pause_screen
 from draw import save_screen
 from draw import game_world
+from draw import dialogue
 
 def load_game():
     with open("saves/save.json", "r") as f:
@@ -212,14 +213,16 @@ def in_game():
                     dist = ((object.player.x - object.NPC[i].x)**2 + (object.player.y - object.NPC[i].y)**2)**0.5
                     if dist >= 80: continue
 
-                    config.dialogue_timer = pygame.time.get_ticks()
-                    if config.show_dialogue == i:
-                        config.current_dialogue += 1
-                        if config.current_dialogue >= len(object.NPC[config.show_dialogue].dialogue):
-                            config.show_dialogue = None
+                    dialogue.dialogue_timer = pygame.time.get_ticks()
+                    dialogue.communicate_done = None
+                    dialogue.last_chars = 0
+                    if dialogue.show_dialogue == i:
+                        dialogue.current_dialogue += 1
+                        if dialogue.current_dialogue >= len(object.NPC[dialogue.show_dialogue].dialogue):
+                            dialogue.show_dialogue = None
                     else:
-                        config.current_dialogue = 0
-                        config.show_dialogue = i
+                        dialogue.current_dialogue = 0
+                        dialogue.show_dialogue = i
                     break
 
     mw, mh = world.MAPS[config.current_map].size

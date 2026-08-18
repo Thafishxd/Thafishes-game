@@ -4,14 +4,30 @@ from enum import Enum
 pygame.init()
 pygame.mixer.init()
 
+# --- ASSETS ---
+SELECT_EFFECT = "assets/sound/menu-selection.wav"
+EDIT_EFFECT = "assets/sound/ui-radio-select.wav"
+BACK_EFFECT = "assets/sound/ui-back-sound.wav"
+ENTER_EFFECT = "assets/sound/interface.wav"
+INTRO_EFFECT = "assets/sound/intro-bass.wav"
+
+KRYPTON_MEDIUM = "assets/font/MonaspaceKryptonNF-Medium.otf"
+KRYPTON_BOLD = "assets/font/MonaspaceKryptonNF-Bold.otf"
+KRYPTON_REGULAR = "assets/font/MonaspaceKryptonNF-Regular.otf"
+KRYPTON_WIDE_BOLD = "assets/font/MonaspaceKryptonNF-WideBold.otf"
+KRYPTON_EXTRA_BOLD = "assets/font/MonaspaceKryptonNF-ExtraBold.otf"
+
+# --- INIT ---
 WIDTH, HEIGHT = 1200, 600
+ZERO_WIDTH_CHAR = chr(8203)
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Indie testing - Indev")
 clock = pygame.time.Clock()
-font = pygame.font.SysFont("Courier New", 16)
-big_font = pygame.font.SysFont("Courier New", 38, bold=True)
-sub_font = pygame.font.SysFont("Courier New", 14)
-item_font = pygame.font.SysFont("Courier New", 18)
+font = pygame.font.Font(KRYPTON_MEDIUM, 16)
+big_font = pygame.font.Font(KRYPTON_WIDE_BOLD, 38)
+sub_font = pygame.font.Font(KRYPTON_REGULAR, 14)
+item_font = pygame.font.Font(KRYPTON_MEDIUM, 18)
 
 class GameState(Enum):
     MENU = "menu"
@@ -27,9 +43,6 @@ def init():
     global current_map, debug_mode, show_dialogue, current_dialogue, dialogue_timer
     current_map = 0
     debug_mode = False
-    show_dialogue = None
-    current_dialogue = 0
-    dialogue_timer = 0
     
 init()
 
@@ -120,11 +133,3 @@ settings_selected = 0
 SETTINGS_ITEMS = ["DEBUG MODE: OFF", "BLINK SPEED: 700", "GHOST TRAVEL: 30", "BACK"]
 
 TPS = 60
-
-# --- SOUND EFFECT ---
-SELECT_EFFECT = "assets/sound/menu-selection.wav"
-EDIT_EFFECT = "assets/sound/ui-radio-select.wav"
-BACK_EFFECT = "assets/sound/ui-back-sound.wav"
-ENTER_EFFECT = "assets/sound/interface.wav"
-
-INTRO_EFFECT = "assets/sound/intro-bass.wav"

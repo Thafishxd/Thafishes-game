@@ -55,9 +55,9 @@ def draw_game_world():
         ), (10, 10))
 
     # DIALOGUE
-    if config.show_dialogue != None:
+    if dialogue.show_dialogue != None:
         if not dialogue.draw_dialogue():
-            config.dialogue_timer = pygame.time.get_ticks()
-            config.current_dialogue += 1
-            if not config.current_dialogue < len(object.NPC[config.show_dialogue].dialogue):
-                config.show_dialogue = None
+            dialogue.dialogue_timer = pygame.time.get_ticks()
+            dialogue.current_dialogue += 1
+            if not dialogue.current_dialogue < len(object.NPC[dialogue.show_dialogue].dialogue):
+                dialogue.show_dialogue = None

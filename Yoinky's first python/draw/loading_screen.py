@@ -105,8 +105,8 @@ def _draw_bar(WIDTH, HEIGHT):
         bar = "^______^ hello"
 
     mono_font = pygame.font.SysFont("Bahnschrift, Segoe UI Semibold, Arial, Helvetica", 34, bold=True)
-    bar_font = pygame.font.SysFont("Courier New", 20, bold=True)
-    status_font = pygame.font.SysFont("Courier New", 20)
+    bar_font = pygame.font.Font(config.KRYPTON_BOLD, 20)
+    status_font = pygame.font.Font(config.KRYPTON_MEDIUM, 20)
 
     title_surf = mono_font.render(title_text, True, loading_color)
     bar_surf = bar_font.render(bar, True, bar_color)
@@ -124,8 +124,8 @@ def _draw_welcome_text(WIDTH, HEIGHT):
     typed_chars = min(len(complete_text), elapsed // config.complete_char_delay)
     shown_text = complete_text[:typed_chars]
 
-    mono_font = pygame.font.SysFont("Courier New", 20, bold=True)
-    tip_font = pygame.font.SysFont("Courier New", 14)
+    mono_font = pygame.font.Font(config.KRYPTON_BOLD, 20)
+    tip_font = pygame.font.Font(config.KRYPTON_MEDIUM, 14)
 
     complete_surf = mono_font.render(shown_text, True, (230, 230, 230))
     text_x = WIDTH // 2 - complete_surf.get_width() // 2
@@ -311,7 +311,7 @@ def _render_syncing_content(target, WIDTH, HEIGHT):
     rect = _syncing_zoom_rect(WIDTH, HEIGHT)
 
     title_font = pygame.font.SysFont("Bahnschrift, Segoe UI Semibold, Arial, Helvetica", 34, bold=True)
-    timer_font = pygame.font.SysFont("Courier New", 12)
+    timer_font = pygame.font.Font(config.KRYPTON_MEDIUM, 12)
 
     shadow_surf = _render_tracked_text(title_font, "SYNCING", (0, 0, 0), spacing=7)
     shadow_surf.set_alpha(110)
