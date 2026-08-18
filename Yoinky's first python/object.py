@@ -13,7 +13,7 @@ class Object:
         self.dialogue = dialogue
         self.map = map
 
-        seed = int(hashlib.md5(name.encode()).hexdigest()[:8], 16) ^ (sum(color) * 5)
+        seed = int(hashlib.md5(name.encode()).hexdigest()[:8], 16) ^ color[0] ^ color[1] ^ color[2] ^ (sum(color) * 5)
         frequency = numpy.random.default_rng(seed).integers(300, 700)
 
         sample_rate = 44100
@@ -48,6 +48,6 @@ def init():
         Object("Sarah", 450, 150, 32, (255, 0, 0), [(8000, "Yo It's still in progress"), (5000, "Stay tuned! ...")], 1),
         Object("Stupid", 100, 150, 32, (0, 60, 60), [(5000, "I'm stupid"), (5000, f".{zero_width_10x}.{zero_width_10x}.")], 2),
         Object("???", 2236, 536, 32, (155, 0, 60), [(5000, "Have you seen <Stupid>?"), (5000, f"She is truly,{zero_width_10x} genuinely stupid"), (5000, f"yeah {zero_width_10x}.{zero_width_10x}.{zero_width_10x}.{zero_width_10x}")], 5),
-        Object("One of the fish", 200, 55, 32, (130, 20, 99), [(5000, "The decisions are made by The fishes ..."), (5000, "Also, Sarah likes femboys")], 3)
+        Object("One of the fish", 200, 55, 32, (130, 255, 99), [(5000, "The decisions are made by The fishes ..."), (5000, "Also, Sarah likes femboys")], 3)
     ]
 init()
