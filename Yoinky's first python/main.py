@@ -71,13 +71,13 @@ def in_menu():
             case pygame.QUIT: close_game()
             case pygame.KEYDOWN:
                 match event.key:
-                    case pygame.K_DOWN:
+                    case pygame.K_s | pygame.K_DOWN:
                         pygame.mixer.Sound(config.SELECT_EFFECT).play()
                         config.menu_selected = (config.menu_selected + 1) % len(config.MENU_ITEMS)
-                    case pygame.K_UP:
+                    case pygame.K_w | pygame.K_UP:
                         pygame.mixer.Sound(config.SELECT_EFFECT).play()
                         config.menu_selected = (config.menu_selected - 1) % len(config.MENU_ITEMS)
-                    case pygame.K_RETURN:
+                    case pygame.K_SPACE | pygame.K_RETURN:
                         match config.menu_selected:
                             case 0:
                                 pygame.mixer.Sound(config.ENTER_EFFECT).play()
@@ -104,21 +104,13 @@ def in_setting():
             case pygame.QUIT: close_game()
             case pygame.KEYDOWN:
                 match event.key:
-                    case pygame.K_DOWN:
+                    case pygame.K_s | pygame.K_DOWN:
                         pygame.mixer.Sound(config.SELECT_EFFECT).play()
                         config.settings_selected = (config.settings_selected + 1) % len(config.SETTINGS_ITEMS)
-                    case pygame.K_UP:
+                    case pygame.K_w | pygame.K_UP:
                         pygame.mixer.Sound(config.SELECT_EFFECT).play()
                         config.settings_selected = (config.settings_selected - 1) % len(config.SETTINGS_ITEMS)
-                    case pygame.K_RETURN:
-                        match config.settings_selected:
-                            case 0:
-                                pygame.mixer.Sound(config.EDIT_EFFECT).play()
-                                config.debug_mode = not config.debug_mode
-                            case 3:
-                                pygame.mixer.Sound(config.BACK_EFFECT).play()
-                                config.game_state.pop()
-                    case pygame.K_LEFT:
+                    case pygame.K_a | pygame.K_LEFT:
                         match config.settings_selected:
                             case 1:
                                 pygame.mixer.Sound(config.EDIT_EFFECT).play()
@@ -126,7 +118,7 @@ def in_setting():
                             case 2:
                                 pygame.mixer.Sound(config.EDIT_EFFECT).play()
                                 config.side_bracket_ghost_travel = max(config.GHOST_TRAVEL_MIN, config.side_bracket_ghost_travel - config.GHOST_TRAVEL_STEP)
-                    case pygame.K_RIGHT:
+                    case pygame.K_d | pygame.K_RIGHT:
                         match config.settings_selected:
                             case 1:
                                 pygame.mixer.Sound(config.EDIT_EFFECT).play()
@@ -134,6 +126,14 @@ def in_setting():
                             case 2:
                                 pygame.mixer.Sound(config.EDIT_EFFECT).play()
                                 config.side_bracket_ghost_travel = min(config.GHOST_TRAVEL_MAX, config.side_bracket_ghost_travel + config.GHOST_TRAVEL_STEP)
+                    case pygame.K_SPACE | pygame.K_RETURN:
+                        match config.settings_selected:
+                            case 0:
+                                pygame.mixer.Sound(config.EDIT_EFFECT).play()
+                                config.debug_mode = not config.debug_mode
+                            case 3:
+                                pygame.mixer.Sound(config.BACK_EFFECT).play()
+                                config.game_state.pop()
                     case pygame.K_ESCAPE:
                         pygame.mixer.Sound(config.BACK_EFFECT).play()
                         config.game_state.pop()
@@ -153,7 +153,7 @@ def in_pause():
                     case pygame.K_w | pygame.K_UP:
                         pygame.mixer.Sound(config.SELECT_EFFECT).play()
                         config.pause_selected = (config.pause_selected - 1) % len(config.PAUSE_ITEMS)
-                    case pygame.K_RETURN:
+                    case pygame.K_SPACE | pygame.K_RETURN:
                         pygame.mixer.Sound(config.SELECT_EFFECT).play()
                         match config.pause_selected:
                             case 0: config.game_state.append(config.GameState.GAME)
@@ -178,7 +178,7 @@ def in_save():
                     case pygame.K_w | pygame.K_UP:
                         pygame.mixer.Sound(config.SELECT_EFFECT).play()
                         config.save_selected = (config.save_selected - 1) % len(config.SAVE_ITEMS)
-                    case pygame.K_RETURN:
+                    case pygame.K_SPACE | pygame.K_RETURN:
                         pygame.mixer.Sound(config.BACK_EFFECT).play()
                         match config.save_selected:
                             case 0:
